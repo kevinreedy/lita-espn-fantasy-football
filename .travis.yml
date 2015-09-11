@@ -1,8 +1,16 @@
 language: ruby
 rvm:
-  - 2.0.0
+- 2.0.0
 script: bundle exec rake
 before_install:
-  - gem update --system
+- gem update --system
 services:
-  - redis-server
+- redis-server
+deploy:
+  provider: rubygems
+  api_key:
+    secure: OaQ6BdoABson4OoBWWoACf23/3caU+3ZxazgG/GECR81+OHnAW+jZ6axJEQLih+e0UjfOm9GzsJMWhGQwBEqpqZsNLqiIVmc0qNMx1bnPOvldjFiwHqTYg6atMPIwm8TcmwuDmL/1MwWn0t88KRSXEj60EMgKLE18pqRZoUFDT5fCbgYyMJ5i8BLjzHDwEz1Jj2Izax5MZnzw7tqMWjDNkvo30+7+Rf8RKmouduCKu6kR9+YfDpFS0VRJyp49SJ1rix4oy4ZltNHs7x4wH0ZgGkrzbPrGb/qXcz8NxlOzui5Ys5BKbS3RgmSc1a1K9KM/sb3pG6RtoV/LiHPKIWwsGLBCzB+2Tur2cmBOEX/sps8dUVOShh7oqzxMASpT+jQ8FNajWKVn7J+SXF0VKRu9kXYBX4wYTXPm9sKpKmB0hLtXyQrEbU8VZE1ySDYmuiz37zvyUlsS8E+aMm5aWv3uKcFvky+WdD1es6vCEOXaV6sI9NDFdkHprHs5s+an9zcWET/4f1V+o2ZKZHvFjbN7RczDtTOW9+A+zYIoP5HKCxNjCDXqHXiwpL+clsSdsDOOZmk695QMJslcnNStGN6IT3yNhslTG3qFjYNXcpxRq3yPq3DQFyWeDqriW190s1HSRhLVmKkCYArX4Wi1gSaR0RRH2sGtcZfuxJmHVmbnKc=
+  gem: lita-espn-fantasy-football
+  on:
+    tags: true
+    repo: kevinreedy/lita-espn-fantasy-football
