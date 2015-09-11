@@ -1,12 +1,12 @@
 Gem::Specification.new do |spec|
   spec.name          = "lita-espn-fantasy-football"
   spec.version       = "0.1.0"
-  spec.authors       = ["Kevin Reedy"]
-  spec.email         = ["kevinreedy@gmail.com"]
-  spec.description   = "TODO: Add a description"
-  spec.summary       = "TODO: Add a summary"
-  spec.homepage      = "TODO: Add a homepage"
-  spec.license       = "TODO: Add a license"
+  spec.authors       = ["Kevin Reedy", "Miles Evenson"]
+  spec.email         = ["kevinreedy@gmail.com", "miles.evenson@gmail.com"]
+  spec.description   = "Lita handler for ESPN Fantasy Football"
+  spec.summary       = "Lita handler for ESPN Fantasy Football"
+  spec.homepage      = "https://github.com/kevinreedy/lita-espn-fantasy-football"
+  spec.license       = "Apache License, v2.0"
   spec.metadata      = { "lita_plugin_type" => "handler" }
 
   spec.files         = `git ls-files`.split($/)
