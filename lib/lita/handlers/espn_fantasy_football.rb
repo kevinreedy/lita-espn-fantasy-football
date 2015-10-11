@@ -40,7 +40,7 @@ module Lita
         end
 
         Lita.logger.debug("#{ response.user.name } requested scoreboard for week '#{ week }'")
-        matchups = espn_scoreboard_scrape(week).map do |m|
+        matchups = espn_scoreboard_scrape(week)
         table = Terminal::Table.new(:headings => matchsup["headers"], :rows => matchups["rows"])
         response.reply("```\n#{ table }\n```")
       end
