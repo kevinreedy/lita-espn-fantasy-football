@@ -13,6 +13,10 @@ module Lita
         "player PLAYER NAME" => "Replies information about this football player"
       })
 
+      route(/^scoreboard\s+\(\d*\)/, :command_scoreboard, command: true, help: {
+        "scoreboard WEEK" => "Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned"
+      })
+
       # chat controllers
       def command_player(response)
         player = response.matches.first.first
@@ -25,6 +29,20 @@ module Lita
         else
           response.reply("No results found for '#{ player }'")
         end
+      end
+
+      def command_scoreboard(response)
+        week = response.matches.first.first
+        unless week.empty?
+          if week.to_i < 1 or week.to_i > 13
+            response.reply("Please specify a week from 1 - 13")
+          end
+        end
+
+        Lita.logger.debug("#{ response.user.name } requested scoreboard for week '#{ week }'")
+        matchups = espn_scoreboard_scrape(week).map do |m|
+        table = Terminal::Table.new(:headings => matchsup["headers"], :rows => matchups["rows"])
+        response.reply("```\n#{ table }\n```")
       end
 
       # constants
@@ -119,6 +137,43 @@ module Lita
 
         end
 
+        resp
+      end
+
+      def espn_scoreboard_scrape(week)
+        resp = {
+          "headers" => [
+            "team",
+            "score"
+          ],
+          "rows" => []
+        }
+        params = {
+          "leagueId" => config.league_id,
+          "seasonId" => config.season_id
+        }
+        # If no period (aka, week) is specified, ESPN defaults to the
+        # most recent (aka, current) matchup period
+        unless week.empty?
+          params["matchupPeriodId"] = week
+        end
+
+        param_string = params.map { |key, val| "#{key}=#{val}" }
+        url = "http://games.espn.go.com/ffl/scoreboard?#{param_string}"
+        scoreboard = Nokogiri::HTML(open(url))
+
+        matchups = page.css("table.playerTableTable.tableBody tr.pncPlayerRow")
+        resp.rows = matchups.map do |m|
+          rows = m.css("tr")
+          team_top  = rows[0].css("td.team div.name a").text
+          team_bottom = rows[1].css("td.team div.name a").text
+          score_top  = rows[0].css("td.score").text
+          score_bottom = rows[1].css("td.score").text
+          {
+            "team"  => "#{team_top}\n#{team_bottom}",
+            "score" => "#{score_top}\n#{score_bottom}"
+          }
+        end
         resp
       end
 
