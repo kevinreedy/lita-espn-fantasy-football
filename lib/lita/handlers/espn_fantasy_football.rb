@@ -217,7 +217,7 @@ module Lita
 
           # add emoji
           line.gsub!(/(\S+\sadded)/, ":green_heart: \\1")
-          line.gsub!(/(\S+\sdropped)/, ":broken heart: \\1")
+          line.gsub!(/(\S+\sdropped)/, ":broken_heart: \\1")
 
           resp << line
         end
