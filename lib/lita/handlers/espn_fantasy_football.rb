@@ -17,6 +17,11 @@ module Lita
         "score WEEK" => "Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned"
       })
 
+      route(/^sup/, :command_sup, command: true)
+      def command_sup(response)
+        response.reply(espn_activity_scrape)
+      end
+
       # chat controllers
       def command_player(response)
         player = response.matches.first.first
@@ -176,6 +181,33 @@ module Lita
             "team"  => "#{team_top}\n#{team_bottom}\n ",
             "score" => "#{score_top}\n#{score_bottom}\n "
           }
+        end
+
+        resp
+      end
+
+      def espn_activity_scrape
+        resp = []
+        params = {
+          "leagueId" => config.league_id,
+          "seasonId" => config.season_id
+        }
+
+        param_string = params.map { |key, val| "#{key}=#{val}" }.join("&")
+        url = "http://games.espn.go.com/ffl/recentactivity?#{param_string}"
+        Lita.logger.debug("Searching for league activity at #{ url }")
+        page = Nokogiri::HTML(open(url))
+
+        # get activity and remove header rows
+        activity = page.xpath('//*[@class="games-fullcol games-fullcol-extramargin"]/table/tr').drop(2)
+
+        activity.each do |a|
+          # TODO: check time stamps
+          # TODO: emoji!
+          # TODO: formatting
+          # TODO: timer instead of command
+          resp << a.css("td")[2].text
+
         end
 
         resp
