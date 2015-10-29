@@ -14,7 +14,7 @@ module Lita
       })
 
       route(/^score(board)*\s*(\d*)/, :command_scoreboard, command: true, help: {
-        "scoreboard WEEK" => "Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned"
+        "score WEEK" => "Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned"
       })
 
       # chat controllers
