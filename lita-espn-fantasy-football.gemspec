@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "lita-espn-fantasy-football"
-  spec.version       = "0.1.2"
+  spec.version       = "0.1.4"
   spec.authors       = ["Kevin Reedy", "Miles Evenson"]
   spec.email         = ["kevinreedy@gmail.com", "miles.evenson@gmail.com"]
   spec.description   = "Lita handler for ESPN Fantasy Football"
@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", ">= 3.0.0"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "coveralls"
+  spec.add_development_dependency "lita-console"
 end

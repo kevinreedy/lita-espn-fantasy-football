@@ -13,8 +13,8 @@ module Lita
         "player PLAYER NAME" => "Replies information about this football player"
       })
 
-      route(/^scoreboard\s+\(\d*\)/, :command_scoreboard, command: true, help: {
-        "scoreboard WEEK" => "Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned"
+      route(/^score(board)*\s*(\d*)/, :command_scoreboard, command: true, help: {
+        "score WEEK" => "Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned"
       })
 
       # chat controllers
@@ -32,17 +32,15 @@ module Lita
       end
 
       def command_scoreboard(response)
-        week = response.matches.first.first
-        unless week.empty?
-          if week.to_i < 1 or week.to_i > 13
-            response.reply("Please specify a week from 1 - 13")
-          end
-        end
-
+        week = response.matches.first[1]
         Lita.logger.debug("#{ response.user.name } requested scoreboard for week '#{ week }'")
-        matchups = espn_scoreboard_scrape(week)
-        table = Terminal::Table.new(:headings => matchups["headers"], :rows => matchups["rows"])
-        response.reply("```\n#{ table }\n```")
+
+        if week.empty? || (week.to_i >= 1 && week.to_i <= 13)
+          matchups = espn_scoreboard_scrape(week)
+          response.reply(format_results(matchups))
+        else
+          response.reply("Please specify a week from 1 - 13")
+        end
       end
 
       # constants
@@ -148,32 +146,38 @@ module Lita
           ],
           "rows" => []
         }
+
         params = {
           "leagueId" => config.league_id,
           "seasonId" => config.season_id
         }
+
         # If no period (aka, week) is specified, ESPN defaults to the
         # most recent (aka, current) matchup period
         unless week.empty?
           params["matchupPeriodId"] = week
         end
 
-        param_string = params.map { |key, val| "#{key}=#{val}" }
+        param_string = params.map { |key, val| "#{key}=#{val}" }.join("&")
         url = "http://games.espn.go.com/ffl/scoreboard?#{param_string}"
-        scoreboard = Nokogiri::HTML(open(url))
+        Lita.logger.debug("Searching for score at #{ url }")
 
-        matchups = page.css("table.playerTableTable.tableBody tr.pncPlayerRow")
-        resp.rows = matchups.map do |m|
+        page = Nokogiri::HTML(open(url))
+        matchups = page.xpath('//*[@class="ptsBased matchup"]')
+
+        resp["rows"] = matchups.map do |m|
           rows = m.css("tr")
           team_top  = rows[0].css("td.team div.name a").text
           team_bottom = rows[1].css("td.team div.name a").text
           score_top  = rows[0].css("td.score").text
           score_bottom = rows[1].css("td.score").text
+
           {
-            "team"  => "#{team_top}\n#{team_bottom}",
-            "score" => "#{score_top}\n#{score_bottom}"
+            "team"  => "#{team_top}\n#{team_bottom}\n ",
+            "score" => "#{score_top}\n#{score_bottom}\n "
           }
         end
+
         resp
       end
 

@@ -28,6 +28,8 @@ end
 
 ### Searching for a Player
 
+Search for a player by last name
+
 ```
 Lita: player manning
 
@@ -38,4 +40,46 @@ Lita: player manning
 | Eli Manning      | NYG  | QB       | CALI  | 17         |      |
 | Mario Manningham | NYG  | WR       | FA    | --         |      |
 +------------------+------+----------+-------+------------+------+
+```
+
+### Checking the scoreboard
+
+Get this week's scoreboard
+
+```
+Lita: score
+
++-------------------------------+-------+
+| team                          | score |
++-------------------------------+-------+
+| The Prime Rib Special         | 66    |
+| Wouldn't it be great if I won | 147   |
+|                               |       |
+| Genghis is my real name       | 60    |
+| Miles is a better real name   | 104   |
+|                               |       |
+| Is Keith still alive?         | 71    |
+| Minnesota State Faircatch     | 108   |
+|                               |       |
++-------------------------------+-------+
+```
+
+Get any week's scoreboard
+
+```
+Lita: score 3
+
++-------------------------------+-------+
+| team                          | score |
++-------------------------------+-------+
+| Is Keith still alive?         | 72    |
+| Miles is a better real name   | 71    |
+|                               |       |
+| Genghis is my real name       | 97    |
+| Wouldn't it be great if I won | 62    |
+|                               |       |
+| The Prime Rib Special         | 119   |
+| Minnesota State Faircatch     | 107   |
+|                               |       |
++-------------------------------+-------+
 ```
