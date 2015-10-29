@@ -203,11 +203,23 @@ module Lita
 
         activity.each do |a|
           # TODO: check time stamps
-          # TODO: emoji!
-          # TODO: formatting
           # TODO: timer instead of command
-          resp << a.css("td")[2].text
+          line = a.css("td")[2].inner_html
 
+          # remove asterisks, as they'll conflict with markdown
+          line.gsub!(/\*/, "")
+
+          # convert bold formatting
+          line.gsub!(/<(\/)?b>/, "*")
+
+          # convert breaks to newlines
+          line.gsub!(/<br>/, "\n")
+
+          # add emoji
+          line.gsub!(/(\S+\sadded)/, ":green_heart: \\1")
+          line.gsub!(/(\S+\sdropped)/, ":broken heart: \\1")
+
+          resp << line
         end
 
         resp
