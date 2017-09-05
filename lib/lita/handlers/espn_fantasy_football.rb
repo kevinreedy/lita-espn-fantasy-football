@@ -1,5 +1,6 @@
 require "nokogiri"
 require "terminal-table"
+require "open-uri"
 
 module Lita
   module Handlers
