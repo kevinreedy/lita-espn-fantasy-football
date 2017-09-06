@@ -185,7 +185,7 @@ module Lita
         resp
       end
 
-      def espn_activity_scrape
+      def espn_activity_scrape(since = DateTime.new(config.season_id.to_i))
         resp = []
         params = {
           'leagueId' => config.league_id,
@@ -201,10 +201,12 @@ module Lita
         activity = page.xpath('//*[@class="games-fullcol games-fullcol-extramargin"]/table/tr').drop(2)
 
         activity.each do |a|
-          # TODO: check time stamps
           # TODO: timer instead of command
-          date = a.css('td')[0].children[0].text
-          time = a.css('td')[0].children[2].text
+          timestamp = DateTime.parse("#{a.css('td')[0].children[0].text} #{a.css('td')[0].children[2].text}")
+
+          # Exit loop if we've passed the datetime passed into method
+          break if timestamp <= since
+
           type = a.css('td')[1].children[1].text
           subtype = a.css('td')[1].children[4].text
           detail = a.css('td')[2].inner_html
