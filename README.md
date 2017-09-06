@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/kevinreedy/lita-espn-fantasy-football.png?branch=master)](https://travis-ci.org/kevinreedy/lita-espn-fantasy-football)
 [![Coverage Status](https://coveralls.io/repos/kevinreedy/lita-espn-fantasy-football/badge.png)](https://coveralls.io/r/kevinreedy/lita-espn-fantasy-football)
 
-This handler is used to scrape data from ESPN's Fantasy Football Site. Right now, it is very limited, so PRs are very welcome!
+This [Lita](https://www.lita.io/) handler is used to scrape data from ESPN's Fantasy Football Site. Right now, it is very limited, so PRs are very welcome!
 
 ## Installation
 
@@ -15,12 +15,12 @@ gem "lita-espn-fantasy-football"
 
 ## Configuration
 
-Set your `league_id`, and optionally `season_id` (defaults to 2015)
+Set your `league_id`, and optionally `season_id` (defaults to 2017)
 
 ```ruby
 Lita.configure do |config|
   config.handlers.espn_fantasy_football.league_id = "123456"
-  config.handlers.espn_fantasy_football.season_id = "2015"
+  config.handlers.espn_fantasy_football.season_id = "2017"
 end
 ```
 
