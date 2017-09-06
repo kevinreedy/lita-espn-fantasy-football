@@ -4,7 +4,10 @@ Gem::Specification.new do |s|
   s.authors       = ['Kevin Reedy', 'Miles Evenson']
   s.email         = ['kevinreedy@gmail.com', 'miles.evenson@gmail.com']
   s.description   = 'Lita handler for ESPN Fantasy Football'
-  s.summary       = 'Lita handler for ESPN Fantasy Football'
+  s.summary       = <<-EOF
+    This Lita handler is used to scrape data from ESPN's Fantasy Football Site.
+    Right now, it is very limited, so PRs are very welcome!
+  EOF
   s.homepage      = 'https://github.com/kevinreedy/lita-espn-fantasy-football'
   s.license       = 'Apache License, v2.0'
   s.metadata      = { 'lita_plugin_type' => 'handler' }

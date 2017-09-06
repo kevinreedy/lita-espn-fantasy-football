@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/kevinreedy/lita-espn-fantasy-football.png?branch=master)](https://travis-ci.org/kevinreedy/lita-espn-fantasy-football)
 [![Coverage Status](https://coveralls.io/repos/kevinreedy/lita-espn-fantasy-football/badge.png)](https://coveralls.io/r/kevinreedy/lita-espn-fantasy-football)
 
-This handler is used to scrape data from ESPN's Fantasy Football Site. Right now, it is very limited, so PRs are very welcome!
+This [Lita](https://www.lita.io/) handler is used to scrape data from ESPN's Fantasy Football Site. Right now, it is very limited, so PRs are very welcome!
 
 ## Installation
 
