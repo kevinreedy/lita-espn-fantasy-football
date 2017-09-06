@@ -273,7 +273,8 @@ module Lita
           redis.set('espn_fantasy_football_last_activity', timestamp.to_s) if timestamp > latest_activity
         end
 
-        resp
+        # events are latest-first on espn, but we want to post earliest-first
+        resp.reverse
       end
 
       def format_results(raw)
