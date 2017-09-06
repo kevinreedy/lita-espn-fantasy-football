@@ -15,12 +15,12 @@ gem "lita-espn-fantasy-football"
 
 ## Configuration
 
-Set your `league_id`, and optionally `season_id` (defaults to 2015)
+Set your `league_id`, and optionally `season_id` (defaults to 2017)
 
 ```ruby
 Lita.configure do |config|
   config.handlers.espn_fantasy_football.league_id = "123456"
-  config.handlers.espn_fantasy_football.season_id = "2015"
+  config.handlers.espn_fantasy_football.season_id = "2017"
 end
 ```
 
