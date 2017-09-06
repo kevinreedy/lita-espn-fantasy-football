@@ -1,29 +1,29 @@
-Gem::Specification.new do |spec|
-  spec.name          = "lita-espn-fantasy-football"
-  spec.version       = "0.1.6"
-  spec.authors       = ["Kevin Reedy", "Miles Evenson"]
-  spec.email         = ["kevinreedy@gmail.com", "miles.evenson@gmail.com"]
-  spec.description   = "Lita handler for ESPN Fantasy Football"
-  spec.summary       = "Lita handler for ESPN Fantasy Football"
-  spec.homepage      = "https://github.com/kevinreedy/lita-espn-fantasy-football"
-  spec.license       = "Apache License, v2.0"
-  spec.metadata      = { "lita_plugin_type" => "handler" }
+Gem::Specification.new do |s|
+  s.name          = "lita-espn-fantasy-football"
+  s.version       = "0.1.6"
+  s.authors       = ["Kevin Reedy", "Miles Evenson"]
+  s.email         = ["kevinreedy@gmail.com", "miles.evenson@gmail.com"]
+  s.description   = "Lita handler for ESPN Fantasy Football"
+  s.summary       = "Lita handler for ESPN Fantasy Football"
+  s.homepage      = "https://github.com/kevinreedy/lita-espn-fantasy-football"
+  s.license       = "Apache License, v2.0"
+  s.metadata      = { "lita_plugin_type" => "handler" }
 
-  spec.files         = `git ls-files`.split($/)
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ["lib"]
+  s.files         = `git ls-files`.split($/)
+  s.executables   = s.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
+  s.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "lita", ">= 4.6"
-  spec.add_runtime_dependency "nokogiri", ">= 1.6"
-  spec.add_runtime_dependency "terminal-table", ">= 1.5"
+  s.add_runtime_dependency "lita", ">= 4.6"
+  s.add_runtime_dependency "nokogiri", ">= 1.6"
+  s.add_runtime_dependency "terminal-table", ">= 1.5"
 
-  spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "pry-byebug"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "rack-test"
-  spec.add_development_dependency "rspec", ">= 3.0.0"
-  spec.add_development_dependency "simplecov"
-  spec.add_development_dependency "coveralls"
-  spec.add_development_dependency "lita-console"
+  s.add_development_dependency "bundler", "~> 1.3"
+  s.add_development_dependency "pry-byebug"
+  s.add_development_dependency "rake"
+  s.add_development_dependency "rack-test"
+  s.add_development_dependency "rspec", ">= 3.0.0"
+  s.add_development_dependency "simplecov"
+  s.add_development_dependency "coveralls"
+  s.add_development_dependency "lita-console"
 end
