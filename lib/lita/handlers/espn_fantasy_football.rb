@@ -21,7 +21,9 @@ module Lita
 
       route(/^sup/, :command_sup, command: true)
       def command_sup(response)
-        response.reply(espn_activity_scrape)
+        # Get last activity from redis or default to start of season
+        since = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+        response.reply(espn_activity_scrape(since))
       end
 
       # chat controllers
@@ -202,6 +204,7 @@ module Lita
 
         activity.each do |a|
           # TODO: timer instead of command
+          # Parse timestamp
           timestamp = DateTime.parse("#{a.css('td')[0].children[0].text} #{a.css('td')[0].children[2].text}")
 
           # Exit loop if we've passed the datetime passed into method
@@ -228,6 +231,10 @@ module Lita
           end
 
           resp << events.join("\n")
+
+          # Update redis timestamp if newer than latest activity
+          latest_activity = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+          redis.set('espn_fantasy_football_last_activity', timestamp.to_s) if timestamp > latest_activity
         end
 
         resp
