@@ -9,6 +9,10 @@ module Lita
       # configs
       config :league_id, required: true
       config :season_id, default: '2017'
+      config :activity_room
+      config :activity_interval, default: 60 * 15 # Fifteen minutes
+
+      on :connected, :activity_timer
 
       # routes
       route(/^player\s+(.+)/, :command_player, command: true, help: {
@@ -19,12 +23,9 @@ module Lita
               'score WEEK' => 'Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned'
             })
 
-      route(/^sup/, :command_sup, command: true)
-      def command_sup(response)
-        # Get last activity from redis or default to start of season
-        since = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
-        response.reply(espn_activity_scrape(since))
-      end
+      route(/^activity/, :command_activity, command: true, help: {
+              'activity' => 'Replies with the latest league activity. This automatically runs every 15 minutes by default.'
+            })
 
       # chat controllers
       def command_player(response)
@@ -49,6 +50,42 @@ module Lita
           response.reply(format_results(matchups))
         else
           response.reply('Please specify a week from 1 - 13')
+        end
+      end
+
+      def command_activity(response)
+        # Get last activity from redis or default to start of season
+        since = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+        activity = espn_activity_scrape(since)
+
+        if activity && activity.any?
+          response.reply(espn_activity_scrape(since))
+        else
+          response.reply("No new activity since #{sinced.to_time}")
+        end
+      end
+
+      def activity_timer
+        Lita.logger.debug('Setting up activity_timer')
+
+        # If config.activity_room wasn't specified, do not set timer
+        return unless config.activity_room
+
+        # If config.activity_interval is 0, do not set timer
+        return if config.activity_interval.zero?
+
+        every(config.activity_interval) do
+          Lita.logger.debug('Running activity_timer')
+
+          # Get last activity from redis or default to start of season
+          since = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+          activity = espn_activity_scrape(since)
+
+          if activity && activity.any?
+            robot.send_message(Source.new(room: config.activity_room), activity)
+          else
+            Lita.logger.debug('No new activity found')
+          end
         end
       end
 
@@ -203,7 +240,6 @@ module Lita
         activity = page.xpath('//*[@class="games-fullcol games-fullcol-extramargin"]/table/tr').drop(2)
 
         activity.each do |a|
-          # TODO: timer instead of command
           # Parse timestamp
           timestamp = DateTime.parse("#{a.css('td')[0].children[0].text} #{a.css('td')[0].children[2].text}")
 
