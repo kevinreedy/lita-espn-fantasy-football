@@ -61,11 +61,11 @@ module Lita
         if activity && activity.any?
           response.reply(espn_activity_scrape(since))
         else
-          response.reply("No new activity since #{sinced.to_time}")
+          response.reply("No new activity since #{since.to_time}")
         end
       end
 
-      def activity_timer
+      def activity_timer(_response)
         Lita.logger.debug('Setting up activity_timer')
 
         # If config.activity_room wasn't specified, do not set timer
