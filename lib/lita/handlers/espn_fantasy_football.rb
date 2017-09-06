@@ -203,22 +203,29 @@ module Lita
         activity.each do |a|
           # TODO: check time stamps
           # TODO: timer instead of command
-          line = a.css('td')[2].inner_html
-
-          # remove asterisks, as they'll conflict with markdown
-          line.delete!('*')
-
-          # convert bold formatting
-          line.gsub!(%r{<(/)?b>}, '*')
-
-          # convert breaks to newlines
-          line.gsub!(/<br>/, "\n")
+          date = a.css('td')[0].children[0].text
+          time = a.css('td')[0].children[2].text
+          type = a.css('td')[1].children[1].text
+          subtype = a.css('td')[1].children[4].text
+          detail = a.css('td')[2].inner_html
+                    .delete('*') # remove asterisks, as they'll conflict with markdown
+                    .gsub(%r{<(/)?b>}, '*') # convert bold formatting
+                    .gsub(/<br>/, "\n") # convert breaks to newlines
+          events = detail.split("\n")
 
           # add emoji
-          line.gsub!(/(\S+\sadded)/, ':green_heart: \\1')
-          line.gsub!(/(\S+\sdropped)/, ':broken_heart: \\1')
+          if type == 'LM Changed League Settings'
+            events.map! { |ev| ":gear: #{ev}" }
+          elsif type == 'Transaction'
+            events.map! do |ev|
+              ev.gsub(/(\S+\sadded)/, ':green_heart: \\1')
+                .gsub(/(\S+\sdropped)/, ':broken_heart: \\1')
+                .gsub(/(\S+\straded)/, ':revolving_hearts: \\1')
+                .gsub(/(\S+\sdrafted)/, ':heavy_plus_sign: \\1')
+            end
+          end
 
-          resp << line
+          resp << events.join("\n")
         end
 
         resp
