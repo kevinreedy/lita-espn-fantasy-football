@@ -7,7 +7,7 @@ module Lita
     class EspnFantasyFootball < Handler
       # configs
       config :league_id, required: true
-      config :season_id, required: true, default: "2015"
+      config :season_id, default: "2017"
 
       # routes
       route(/^player\s+(.+)/, :command_player, command: true, help: {
