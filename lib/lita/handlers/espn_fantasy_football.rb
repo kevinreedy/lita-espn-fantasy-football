@@ -9,6 +9,10 @@ module Lita
       # configs
       config :league_id, required: true
       config :season_id, default: '2017'
+      config :activity_room
+      config :activity_interval, default: 60 * 15 # Fifteen minutes
+
+      on :connected, :activity_timer
 
       # routes
       route(/^player\s+(.+)/, :command_player, command: true, help: {
@@ -19,10 +23,9 @@ module Lita
               'score WEEK' => 'Replies with the scoreboard for the specified week. If WEEK is empty, the current scoreboard is returned'
             })
 
-      route(/^sup/, :command_sup, command: true)
-      def command_sup(response)
-        response.reply(espn_activity_scrape)
-      end
+      route(/^activity/, :command_activity, command: true, help: {
+              'activity' => 'Replies with the latest league activity. This automatically runs every 15 minutes by default.'
+            })
 
       # chat controllers
       def command_player(response)
@@ -47,6 +50,42 @@ module Lita
           response.reply(format_results(matchups))
         else
           response.reply('Please specify a week from 1 - 13')
+        end
+      end
+
+      def command_activity(response)
+        # Get last activity from redis or default to start of season
+        since = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+        activity = espn_activity_scrape(since)
+
+        if activity && activity.any?
+          response.reply(espn_activity_scrape(since))
+        else
+          response.reply("No new activity since #{sinced.to_time}")
+        end
+      end
+
+      def activity_timer
+        Lita.logger.debug('Setting up activity_timer')
+
+        # If config.activity_room wasn't specified, do not set timer
+        return unless config.activity_room
+
+        # If config.activity_interval is 0, do not set timer
+        return if config.activity_interval.zero?
+
+        every(config.activity_interval) do
+          Lita.logger.debug('Running activity_timer')
+
+          # Get last activity from redis or default to start of season
+          since = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+          activity = espn_activity_scrape(since)
+
+          if activity && activity.any?
+            robot.send_message(Source.new(room: config.activity_room), activity)
+          else
+            Lita.logger.debug('No new activity found')
+          end
         end
       end
 
@@ -185,7 +224,7 @@ module Lita
         resp
       end
 
-      def espn_activity_scrape
+      def espn_activity_scrape(since = DateTime.new(config.season_id.to_i))
         resp = []
         params = {
           'leagueId' => config.league_id,
@@ -201,24 +240,37 @@ module Lita
         activity = page.xpath('//*[@class="games-fullcol games-fullcol-extramargin"]/table/tr').drop(2)
 
         activity.each do |a|
-          # TODO: check time stamps
-          # TODO: timer instead of command
-          line = a.css('td')[2].inner_html
+          # Parse timestamp
+          timestamp = DateTime.parse("#{a.css('td')[0].children[0].text} #{a.css('td')[0].children[2].text}")
 
-          # remove asterisks, as they'll conflict with markdown
-          line.delete!('*')
+          # Exit loop if we've passed the datetime passed into method
+          break if timestamp <= since
 
-          # convert bold formatting
-          line.gsub!(%r{<(/)?b>}, '*')
-
-          # convert breaks to newlines
-          line.gsub!(/<br>/, "\n")
+          type = a.css('td')[1].children[1].text
+          subtype = a.css('td')[1].children[4].text
+          detail = a.css('td')[2].inner_html
+                    .delete('*') # remove asterisks, as they'll conflict with markdown
+                    .gsub(%r{<(/)?b>}, '*') # convert bold formatting
+                    .gsub(/<br>/, "\n") # convert breaks to newlines
+          events = detail.split("\n")
 
           # add emoji
-          line.gsub!(/(\S+\sadded)/, ':green_heart: \\1')
-          line.gsub!(/(\S+\sdropped)/, ':broken_heart: \\1')
+          if type == 'LM Changed League Settings'
+            events.map! { |ev| ":gear: #{ev}" }
+          elsif type == 'Transaction'
+            events.map! do |ev|
+              ev.gsub(/(\S+\sadded)/, ':green_heart: \\1')
+                .gsub(/(\S+\sdropped)/, ':broken_heart: \\1')
+                .gsub(/(\S+\straded)/, ':revolving_hearts: \\1')
+                .gsub(/(\S+\sdrafted)/, ':heavy_plus_sign: \\1')
+            end
+          end
 
-          resp << line
+          resp << events.join("\n")
+
+          # Update redis timestamp if newer than latest activity
+          latest_activity = DateTime.parse(redis.get('espn_fantasy_football_last_activity')) rescue DateTime.new(config.season_id.to_i)
+          redis.set('espn_fantasy_football_last_activity', timestamp.to_s) if timestamp > latest_activity
         end
 
         resp

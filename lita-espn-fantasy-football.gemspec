@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'lita-espn-fantasy-football'
-  s.version       = '0.2.0'
+  s.version       = '0.3.0'
   s.authors       = ['Kevin Reedy', 'Miles Evenson']
   s.email         = ['kevinreedy@gmail.com', 'miles.evenson@gmail.com']
   s.description   = 'Lita handler for ESPN Fantasy Football'
