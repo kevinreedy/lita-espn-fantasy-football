@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
     Right now, it is very limited, so PRs are very welcome!
   EOF
   s.homepage      = 'https://github.com/kevinreedy/lita-espn-fantasy-football'
-  s.license       = 'Apache License, v2.0'
+  s.license       = 'Apache-2.0'
   s.metadata      = { 'lita_plugin_type' => 'handler' }
 
   s.files         = `git ls-files`.split($INPUT_RECORD_SEPARATOR)
