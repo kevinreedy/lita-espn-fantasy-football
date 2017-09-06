@@ -10,17 +10,21 @@ This [Lita](https://www.lita.io/) handler is used to scrape data from ESPN's Fan
 Add lita-espn-fantasy-football to your Lita instance's Gemfile:
 
 ``` ruby
-gem "lita-espn-fantasy-football"
+gem 'lita-espn-fantasy-football'
 ```
 
 ## Configuration
 
-Set your `league_id`, and optionally `season_id` (defaults to 2017)
+Set your `league_id`, and optionally `season_id` (defaults to 2017).
+If you'd like league activity regularly reported, specify an `activity_room`.
+The interval is configurable via `activity_interval` (defaults to 15 minutes).
 
 ```ruby
 Lita.configure do |config|
-  config.handlers.espn_fantasy_football.league_id = "123456"
-  config.handlers.espn_fantasy_football.season_id = "2017"
+  config.handlers.espn_fantasy_football.league_id = '123456'
+  config.handlers.espn_fantasy_football.season_id = '2017'
+  config.handlers.espn_fantasy_football.activity_room = 'general'
+  config.handlers.espn_fantasy_football.activity_interval = 900
 end
 ```
 
@@ -82,4 +86,17 @@ Lita: score 3
 | Minnesota State Faircatch     | 107   |
 |                               |       |
 +-------------------------------+-------+
+```
+
+### See recent league activity
+
+See recent trades, adds, drops, etc.
+
+```
+Lita: activity
+
+:wrench: Renamed team The Prime Rib Special to The SubPrime Rib Special.
+:green_heart: REED added *Kai Forbath*, NO K from Free Agency to Bench
+:broken_heart: REED dropped *Martellus Bennett*, Chi TE to Waivers
+
 ```
