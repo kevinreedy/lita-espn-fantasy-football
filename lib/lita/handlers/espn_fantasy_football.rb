@@ -264,6 +264,11 @@ module Lita
                 .gsub(/(\S+\straded)/, ':revolving_hearts: \\1')
                 .gsub(/(\S+\sdrafted)/, ':heavy_plus_sign: \\1')
             end
+          elsif type == 'Trophy Assigned'
+            # subtype has more info in it than detail alone
+            events = [
+              "#{subtype.gsub(/.*(awarded to)/, ':trophy: \\1')} — #{detail}"
+            ]
           end
 
           resp << events.join("\n")
